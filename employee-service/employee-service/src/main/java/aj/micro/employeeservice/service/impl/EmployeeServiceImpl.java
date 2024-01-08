@@ -6,6 +6,7 @@ import aj.micro.employeeservice.dto.EmployeeDto;
 import aj.micro.employeeservice.entity.Employee;
 import aj.micro.employeeservice.exception.ResourceNotFoundException;
 import aj.micro.employeeservice.repository.EmployeeRepository;
+import aj.micro.employeeservice.service.APIClient;
 import aj.micro.employeeservice.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
     @Autowired
 //    private RestTemplate restTemplate;
-    private WebClient webClient;
+//    private WebClient webClient;
+    private APIClient apiClient;
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
 
@@ -60,11 +62,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 //    DepartmentDto departmentDto =departmentDtoResponseEntity.getBody();
 
 
-     DepartmentDto departmentDto =   webClient.get()
-                .uri("http://localhost:8080/api/departments/"+employee.getDepartmentCode())
-                .retrieve().
-                bodyToMono(DepartmentDto.class)
-                .block();
+//     DepartmentDto departmentDto =   webClient.get()
+//                .uri("http://localhost:8080/api/departments/"+employee.getDepartmentCode())
+//                .retrieve().
+//                bodyToMono(DepartmentDto.class)
+//                .block();
+
+        DepartmentDto departmentDto =  apiClient.getDepartmentByCode(employee.getDepartmentCode());
 
        EmployeeDto employeeDto= new EmployeeDto(
                employee.getId(),
