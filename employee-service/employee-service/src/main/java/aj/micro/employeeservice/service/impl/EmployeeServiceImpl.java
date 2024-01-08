@@ -1,12 +1,16 @@
 package aj.micro.employeeservice.service.impl;
 
+import aj.micro.employeeservice.dto.APIResponceDto;
+import aj.micro.employeeservice.dto.DepartmentDto;
 import aj.micro.employeeservice.dto.EmployeeDto;
 import aj.micro.employeeservice.entity.Employee;
 import aj.micro.employeeservice.exception.ResourceNotFoundException;
 import aj.micro.employeeservice.repository.EmployeeRepository;
 import aj.micro.employeeservice.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 
 @Service
@@ -14,6 +18,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+    @Autowired
+    private RestTemplate restTemplate;
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
 
@@ -21,7 +27,8 @@ public class EmployeeServiceImpl implements EmployeeService {
           employeeDto.getId(),
           employeeDto.getFirstName(),
           employeeDto.getLastName(),
-          employeeDto.getEmail()
+          employeeDto.getEmail(),
+          employeeDto.getDepartmentCode()
         );
 
 
@@ -31,25 +38,36 @@ public class EmployeeServiceImpl implements EmployeeService {
              savedEmployee.getId(),
              savedEmployee.getFirstName(),
              savedEmployee.getLastName(),
-             savedEmployee.getEmail()
+             savedEmployee.getEmail(),
+             savedEmployee.getDepartmentCode()
      );
 
         return savedEmployeeDto;
     }
 
     @Override
-    public EmployeeDto getEmployeeById(Long employeeId) {
+    public APIResponceDto getEmployeeById(Long employeeId) {
        Employee employee = employeeRepository.findById(employeeId).orElseThrow(
                ()->new ResourceNotFoundException("Employee","id",employeeId)
        );
+    ResponseEntity<DepartmentDto> departmentDtoResponseEntity = restTemplate.
+            getForEntity("http://localhost:8080/api/departments/"+employee.getDepartmentCode(),
+               DepartmentDto.class);
+
+    DepartmentDto departmentDto =departmentDtoResponseEntity.getBody();
+
+
        EmployeeDto employeeDto= new EmployeeDto(
                employee.getId(),
                employee.getFirstName(),
                employee.getLastName(),
-               employee.getEmail()
+               employee.getEmail(),
+               employee.getDepartmentCode()
        );
 
-
-        return employeeDto;
+        APIResponceDto apiResponceDto = new APIResponceDto();
+        apiResponceDto.setEmployeeDto(employeeDto);
+        apiResponceDto.setDepartmentDto(departmentDto);
+        return apiResponceDto;
     }
 }

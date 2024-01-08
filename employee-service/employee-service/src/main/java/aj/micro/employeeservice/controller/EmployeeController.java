@@ -1,5 +1,6 @@
 package aj.micro.employeeservice.controller;
 
+import aj.micro.employeeservice.dto.APIResponceDto;
 import aj.micro.employeeservice.dto.EmployeeDto;
 import aj.micro.employeeservice.service.EmployeeService;
 import lombok.Getter;
@@ -20,10 +21,10 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeDto> getEmployeeById(
+    public ResponseEntity<APIResponceDto> getEmployeeById(
             @PathVariable(required = true, name = "id") Long employeeId){
 
-        EmployeeDto employeeDto = employeeService.getEmployeeById(employeeId);
-        return ResponseEntity.status(HttpStatus.OK).body(employeeDto);
+        APIResponceDto apiResponceDto = employeeService.getEmployeeById(employeeId);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponceDto);
     }
 }
