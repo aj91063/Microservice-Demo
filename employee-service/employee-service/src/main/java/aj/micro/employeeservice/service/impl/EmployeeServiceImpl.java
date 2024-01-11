@@ -8,6 +8,7 @@ import aj.micro.employeeservice.exception.ResourceNotFoundException;
 import aj.micro.employeeservice.repository.EmployeeRepository;
 import aj.micro.employeeservice.service.APIClient;
 import aj.micro.employeeservice.service.EmployeeService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
     @Autowired
 //    private RestTemplate restTemplate;
-//    private WebClient webClient;
-    private APIClient apiClient;
+    private WebClient webClient;
+//    private APIClient apiClient;
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
 
@@ -49,6 +50,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return savedEmployeeDto;
     }
 
+    @CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
     @Override
     public APIResponceDto getEmployeeById(Long employeeId) {
        Employee employee = employeeRepository.findById(employeeId).orElseThrow(
@@ -62,13 +64,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 //    DepartmentDto departmentDto =departmentDtoResponseEntity.getBody();
 
 
-//     DepartmentDto departmentDto =   webClient.get()
-//                .uri("http://localhost:8080/api/departments/"+employee.getDepartmentCode())
-//                .retrieve().
-//                bodyToMono(DepartmentDto.class)
-//                .block();
+     DepartmentDto departmentDto =   webClient.get()
+                .uri("http://localhost:8080/api/departments/"+employee.getDepartmentCode())
+                .retrieve().
+                bodyToMono(DepartmentDto.class)
+                .block();
 
-        DepartmentDto departmentDto =  apiClient.getDepartmentByCode(employee.getDepartmentCode());
+     //   DepartmentDto departmentDto =  apiClient.getDepartmentByCode(employee.getDepartmentCode());
 
        EmployeeDto employeeDto= new EmployeeDto(
                employee.getId(),
@@ -77,6 +79,31 @@ public class EmployeeServiceImpl implements EmployeeService {
                employee.getEmail(),
                employee.getDepartmentCode()
        );
+
+        APIResponceDto apiResponceDto = new APIResponceDto();
+        apiResponceDto.setEmployeeDto(employeeDto);
+        apiResponceDto.setDepartmentDto(departmentDto);
+        return apiResponceDto;
+    }
+
+    public APIResponceDto getDefaultDepartment(Long employeeId, Exception exception){
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow(
+                ()->new ResourceNotFoundException("Employee","id",employeeId)
+        );
+
+        DepartmentDto departmentDto = new DepartmentDto();
+        departmentDto.setDepartmentName("R&D Department");
+        departmentDto.setDepartmentDescription("This is R&D Department");
+        departmentDto.setDepartmentCode("RD001");
+
+
+        EmployeeDto employeeDto= new EmployeeDto(
+                employee.getId(),
+                employee.getFirstName(),
+                employee.getLastName(),
+                employee.getEmail(),
+                employee.getDepartmentCode()
+        );
 
         APIResponceDto apiResponceDto = new APIResponceDto();
         apiResponceDto.setEmployeeDto(employeeDto);
