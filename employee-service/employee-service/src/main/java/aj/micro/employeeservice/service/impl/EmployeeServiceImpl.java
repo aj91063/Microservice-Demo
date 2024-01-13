@@ -3,8 +3,10 @@ package aj.micro.employeeservice.service.impl;
 import aj.micro.employeeservice.dto.APIResponceDto;
 import aj.micro.employeeservice.dto.DepartmentDto;
 import aj.micro.employeeservice.dto.EmployeeDto;
+import aj.micro.employeeservice.dto.OrganizationDto;
 import aj.micro.employeeservice.entity.Employee;
 import aj.micro.employeeservice.exception.ResourceNotFoundException;
+import aj.micro.employeeservice.mapper.EmployeeMapper;
 import aj.micro.employeeservice.repository.EmployeeRepository;
 import aj.micro.employeeservice.service.APIClient;
 import aj.micro.employeeservice.service.EmployeeService;
@@ -24,38 +26,23 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
 //    private RestTemplate restTemplate;
     private WebClient webClient;
+
 //    private APIClient apiClient;
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
 
-        Employee employee = new Employee(
-          employeeDto.getId(),
-          employeeDto.getFirstName(),
-          employeeDto.getLastName(),
-          employeeDto.getEmail(),
-          employeeDto.getDepartmentCode()
-        );
-
-
-     Employee  savedEmployee = employeeRepository.save(employee);
-
-     EmployeeDto savedEmployeeDto = new EmployeeDto(
-             savedEmployee.getId(),
-             savedEmployee.getFirstName(),
-             savedEmployee.getLastName(),
-             savedEmployee.getEmail(),
-             savedEmployee.getDepartmentCode()
-     );
-
+        Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
+        Employee savedEmployee = employeeRepository.save(employee);
+        EmployeeDto savedEmployeeDto = EmployeeMapper.mapToEmployeeDto(savedEmployee);
         return savedEmployeeDto;
     }
 
     @CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
     @Override
     public APIResponceDto getEmployeeById(Long employeeId) {
-       Employee employee = employeeRepository.findById(employeeId).orElseThrow(
-               ()->new ResourceNotFoundException("Employee","id",employeeId)
-       );
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow(
+                () -> new ResourceNotFoundException("Employee", "id", employeeId)
+        );
 
 //    ResponseEntity<DepartmentDto> departmentDtoResponseEntity = restTemplate.
 //            getForEntity("http://localhost:8080/api/departments/"+employee.getDepartmentCode(),
@@ -64,31 +51,30 @@ public class EmployeeServiceImpl implements EmployeeService {
 //    DepartmentDto departmentDto =departmentDtoResponseEntity.getBody();
 
 
-     DepartmentDto departmentDto =   webClient.get()
-                .uri("http://localhost:8080/api/departments/"+employee.getDepartmentCode())
+        DepartmentDto departmentDto = webClient.get()
+                .uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
                 .retrieve().
                 bodyToMono(DepartmentDto.class)
                 .block();
+        OrganizationDto organizationDto = webClient.get()
+                .uri("http://localhost:8083/api/organizations/" + employee.getOrganizationCode())
+                .retrieve().
+                bodyToMono(OrganizationDto.class)
+                .block();
 
-     //   DepartmentDto departmentDto =  apiClient.getDepartmentByCode(employee.getDepartmentCode());
+        //   DepartmentDto departmentDto =  apiClient.getDepartmentByCode(employee.getDepartmentCode());
 
-       EmployeeDto employeeDto= new EmployeeDto(
-               employee.getId(),
-               employee.getFirstName(),
-               employee.getLastName(),
-               employee.getEmail(),
-               employee.getDepartmentCode()
-       );
-
+        EmployeeDto employeeDto = EmployeeMapper.mapToEmployeeDto(employee);
         APIResponceDto apiResponceDto = new APIResponceDto();
-        apiResponceDto.setEmployeeDto(employeeDto);
-        apiResponceDto.setDepartmentDto(departmentDto);
+        apiResponceDto.setEmployee(employeeDto);
+        apiResponceDto.setDepartment(departmentDto);
+        apiResponceDto.setOrganization(organizationDto);
         return apiResponceDto;
     }
 
-    public APIResponceDto getDefaultDepartment(Long employeeId, Exception exception){
+    public APIResponceDto getDefaultDepartment(Long employeeId, Exception exception) {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(
-                ()->new ResourceNotFoundException("Employee","id",employeeId)
+                () -> new ResourceNotFoundException("Employee", "id", employeeId)
         );
 
         DepartmentDto departmentDto = new DepartmentDto();
@@ -97,17 +83,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         departmentDto.setDepartmentCode("RD001");
 
 
-        EmployeeDto employeeDto= new EmployeeDto(
-                employee.getId(),
-                employee.getFirstName(),
-                employee.getLastName(),
-                employee.getEmail(),
-                employee.getDepartmentCode()
-        );
+        EmployeeDto employeeDto =EmployeeMapper.mapToEmployeeDto(employee);
 
         APIResponceDto apiResponceDto = new APIResponceDto();
-        apiResponceDto.setEmployeeDto(employeeDto);
-        apiResponceDto.setDepartmentDto(departmentDto);
+        apiResponceDto.setEmployee(employeeDto);
+        apiResponceDto.setDepartment(departmentDto);
         return apiResponceDto;
     }
 }
