@@ -7,10 +7,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="api-gateway" />
         <module name="config-server" />
         <module name="organigation-service" />
+        <module name="spring-kafka-demo" />
         <module name="department-service" />
+        <module name="api-gateway" />
         <module name="service-registry" />
         <module name="employee-service" />
       </profile>
@@ -24,6 +25,7 @@
       <module name="employee-service" options="-parameters" />
       <module name="organigation-service" options="-parameters" />
       <module name="service-registry" options="-parameters" />
+      <module name="spring-kafka-demo" options="-parameters" />
     </option>
   </component>
 </project>
