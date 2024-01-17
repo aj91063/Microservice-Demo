@@ -11,6 +11,10 @@
         <option value="$PROJECT_DIR$/config-server/pom.xml" />
         <option value="$PROJECT_DIR$/organigation-service/pom.xml" />
         <option value="$PROJECT_DIR$/spring-kafka-demo/pom.xml" />
+        <option value="$PROJECT_DIR$/Event-Driven Kafka Services/base-domains/pom.xml" />
+        <option value="$PROJECT_DIR$/Event-Driven Kafka Services/email-service/pom.xml" />
+        <option value="$PROJECT_DIR$/Event-Driven Kafka Services/order-service/pom.xml" />
+        <option value="$PROJECT_DIR$/Event-Driven Kafka Services/stock-service/pom.xml" />
       </list>
     </option>
   </component>
