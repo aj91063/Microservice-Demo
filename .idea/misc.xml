@@ -15,6 +15,7 @@
         <option value="$PROJECT_DIR$/Event-Driven Kafka Services/email-service/pom.xml" />
         <option value="$PROJECT_DIR$/Event-Driven Kafka Services/order-service/pom.xml" />
         <option value="$PROJECT_DIR$/Event-Driven Kafka Services/stock-service/pom.xml" />
+        <option value="$PROJECT_DIR$/spring-rabbitMQ/pom.xml" />
       </list>
     </option>
   </component>

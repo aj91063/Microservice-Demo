@@ -1,0 +1,48 @@
+package aj.micro.springRabbitMQ.config;
+
+
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class RabbitMQConfig {
+/*
+    rabbitmq.queue.name=aj_queue
+    rabbitmq.exchange.name=aj_exchange
+    rabbitmq.routing_key.name=aj_routing_key
+ */
+
+    @Value("${rabbitmq.queue.name}")
+    private String queue;
+    @Value("${rabbitmq.exchange.name}")
+    private String exchange;
+    @Value("${rabbitmq.routing_key.name}")
+    private String routing_key;
+
+    @Bean
+    public Queue queue(){
+        return new Queue(queue);
+    }
+
+    @Bean
+    public TopicExchange exchange(){
+        return new TopicExchange(exchange);
+    }
+
+    @Bean
+    public Binding binding(){
+        return BindingBuilder.bind(queue())
+                .to(exchange())
+                .with(routing_key);
+    }
+    /**
+     * ConnectionFactory
+     * RabbitTemplate
+     * RabbitAdmin
+     */
+}
