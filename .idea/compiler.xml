@@ -8,17 +8,18 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="stock-service" />
-        <module name="config-server" />
-        <module name="base-domains" />
         <module name="organigation-service" />
         <module name="spring-kafka-demo" />
         <module name="department-service" />
         <module name="spring-rabbitMQ" />
+        <module name="queryDSl-demo" />
+        <module name="employee-service" />
+        <module name="config-server" />
+        <module name="base-domains" />
         <module name="email-service" />
         <module name="api-gateway" />
         <module name="order-service" />
         <module name="service-registry" />
-        <module name="employee-service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -32,6 +33,7 @@
       <module name="employee-service" options="-parameters" />
       <module name="order-service" options="-parameters" />
       <module name="organigation-service" options="-parameters" />
+      <module name="queryDSl-demo" options="-parameters" />
       <module name="service-registry" options="-parameters" />
       <module name="spring-kafka-demo" options="-parameters" />
       <module name="spring-rabbitMQ" options="-parameters" />

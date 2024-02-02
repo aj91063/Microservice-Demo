@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenProjectsManager">
@@ -16,6 +15,7 @@
         <option value="$PROJECT_DIR$/Event-Driven Kafka Services/order-service/pom.xml" />
         <option value="$PROJECT_DIR$/Event-Driven Kafka Services/stock-service/pom.xml" />
         <option value="$PROJECT_DIR$/spring-rabbitMQ/pom.xml" />
+        <option value="$PROJECT_DIR$/queryDSl-demo/pom.xml" />
       </list>
     </option>
   </component>
